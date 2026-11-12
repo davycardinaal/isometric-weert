@@ -7,8 +7,9 @@ ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "raw"
 BUILD = ROOT / "data" / "build"
 
-# Helenaveen with the Soemeersingel north to the Willem III-hoeve: 3.5 x 5.5 km.
-XMIN, YMIN, XMAX, YMAX = 189850, 376350, 193350, 381850
+# Weert: the old town inside the singels around the Sint-Martinuskerk, the station, the Zuid-Willemsvaart and the
+# neighbourhoods around them: 3 x 3 km.
+XMIN, YMIN, XMAX, YMAX = 175800, 361000, 178800, 364000
 CX, CY = (XMIN + XMAX) / 2, (YMIN + YMAX) / 2
 
 # Downloads and ground textures come in square chunks of this many meters.

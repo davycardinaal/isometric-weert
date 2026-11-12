@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from config import CHUNK, NX, NY, RAW, XMAX, XMIN, YMAX, YMIN
 
-UA = {"User-Agent": "isometric-helenaveen/0.1"}
+UA = {"User-Agent": "isometric-map/0.1"}
 RD = "http://www.opengis.net/def/crs/EPSG/0/28992"
 
 BGT_COLLECTIONS = [
@@ -54,12 +54,15 @@ def get(url, binary=False, tries=5):
             time.sleep(2 * (attempt + 1))
 
 
-def fetch_3dbag():
-    out = RAW / "3dbag.jsonl"
+def fetch_3dbag_chunk(ix, iy):
+    """The 3D BAG buildings that touch one chunk; a town has too many to page through in one go."""
+    d = RAW / "3dbag"
+    d.mkdir(exist_ok=True)
+    out = d / f"{ix}_{iy}.jsonl"
     if out.exists():
         return
-    url = f"https://api.3dbag.nl/collections/pand/items?bbox={XMIN},{YMIN},{XMAX},{YMAX}&limit=100"
-    n = 0
+    x0, y0 = XMIN + ix * CHUNK, YMIN + iy * CHUNK
+    url = f"https://api.3dbag.nl/collections/pand/items?bbox={x0},{y0},{x0 + CHUNK},{y0 + CHUNK}&limit=100"
     with open(out.with_suffix(".tmp"), "w") as f:
         while url:
             page = get(url)
@@ -67,10 +70,26 @@ def fetch_3dbag():
             for feat in page["features"]:
                 feat["transform"] = transform
                 f.write(json.dumps(feat) + "\n")
-                n += 1
             url = next((l["href"] for l in page["links"] if l["rel"] == "next"), None)
-            print(f"3dbag {n}/{page['numberMatched']}", file=sys.stderr)
     out.with_suffix(".tmp").rename(out)
+    print(f"3dbag chunk {ix},{iy}", file=sys.stderr)
+
+
+def join_3dbag():
+    """One file of every building, each once (a building on a chunk border comes with both chunks)."""
+    out = RAW / "3dbag.jsonl"
+    if out.exists():
+        return
+    seen = set()
+    with open(out.with_suffix(".tmp"), "w") as f:
+        for part in sorted((RAW / "3dbag").glob("*.jsonl")):
+            for line in open(part):
+                fid = json.loads(line)["id"]
+                if fid not in seen:
+                    seen.add(fid)
+                    f.write(line)
+    out.with_suffix(".tmp").rename(out)
+    print(f"3dbag: {len(seen)} buildings", file=sys.stderr)
 
 
 def fetch_bgt(coll):
@@ -133,23 +152,27 @@ def fetch_ahn(cov, ix, iy, chunk=CHUNK):
 
 
 def fetch_addresses():
-    """Every BAG address in Helenaveen, for the viewer's search box."""
+    """Every BAG address of Weert inside the area, for the viewer's search box. The search service does not page past
+    10,000 results, so ask per postcode area (6001 to 6006 are the town)."""
     out = RAW / "addresses.json"
     if out.exists():
         return
-    pts, start = [], 0
-    while True:
-        q = urllib.parse.urlencode(
-            {"q": "*", "fq": ["woonplaatsnaam:Helenaveen", "type:adres"], "fl": "weergavenaam,centroide_rd", "rows": 100, "start": start},
-            doseq=True,
-        )
-        d = get(f"https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?{q}")["response"]
-        for doc in d["docs"]:
-            x, y = (float(v) for v in doc["centroide_rd"][6:-1].split())
-            pts.append((x, y, doc["weergavenaam"]))
-        start += 100
-        if start >= d["numFound"]:
-            break
+    pts = []
+    for pc4 in range(6001, 6007):
+        start = 0
+        while True:
+            q = urllib.parse.urlencode(
+                {"q": "*", "fq": ["woonplaatsnaam:Weert", "type:adres", f"postcode:{pc4}*"], "fl": "weergavenaam,centroide_rd", "rows": 100, "start": start},
+                doseq=True,
+            )
+            d = get(f"https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?{q}")["response"]
+            for doc in d["docs"]:
+                x, y = (float(v) for v in doc["centroide_rd"][6:-1].split())
+                if XMIN <= x <= XMAX and YMIN <= y <= YMAX:
+                    pts.append((x, y, doc["weergavenaam"]))
+            start += 100
+            if start >= d["numFound"]:
+                break
     out.write_text(json.dumps(pts))
 
 
@@ -214,12 +237,14 @@ out geom;"""
 
 def main():
     RAW.mkdir(parents=True, exist_ok=True)
-    jobs = [fetch_3dbag, fetch_addresses, fetch_osm, fetch_routes, fetch_roads, *(lambda c=c: fetch_bgt(c) for c in BGT_COLLECTIONS)]
+    jobs = [fetch_addresses, fetch_osm, fetch_routes, fetch_roads, *(lambda c=c: fetch_bgt(c) for c in BGT_COLLECTIONS)]
     jobs += [lambda c=c, i=i, j=j: fetch_ahn(c, i, j) for c in ("dsm_05m", "dtm_05m") for i in range(NX) for j in range(NY)]
     jobs += [lambda i=i, j=j: fetch_aerial(i, j) for i in range(NX) for j in range(NY)]
+    jobs += [lambda i=i, j=j: fetch_3dbag_chunk(i, j) for i in range(NX) for j in range(NY)]
     with ThreadPoolExecutor(8) as pool:
         for fut in [pool.submit(j) for j in jobs]:
             fut.result()
+    join_3dbag()
     print("done", file=sys.stderr)
 
 

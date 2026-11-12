@@ -2,10 +2,10 @@
 # requires-python = ">=3.11"
 # dependencies = ["numpy"]
 # ///
-"""Named places of Helenaveen: style overrides and extra geometry for buildings, plus the viewer's place list.
+"""Named places of Weert: style overrides and extra geometry for buildings, plus the viewer's place list.
 
-Sources: Monumenten in Nederland, Noord-Brabant (1997), Rijksmonumenten photos on Wikimedia Commons,
-OpenStreetMap, and AHN for tower positions and heights.
+Sources: the Dutch Wikipedia, Wikidata and OpenStreetMap for the places, the Rijksmonumenten register, Wikimedia
+Commons for the photos, and AHN for tower positions and heights.
 
 Output: data/build/landmarks.json
 """
@@ -17,326 +17,295 @@ import numpy as np
 from config import BUILD, RAW
 from geo import wgs_to_rd
 
-HVT = "https://www.helenaveenvantoen.nl/"  # Het Helenaveen van toen, the village's own history site
+RCE = "Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0"
+WP = "https://nl.wikipedia.org/wiki/"  # every story is written from the Dutch Wikipedia article it links to
 
 # Buildings found by an address or point; `pand` is resolved to the 3D BAG building under that point.
 BUILDINGS = [
     {
-        "name": "Sint-Willibrorduskerk",
-        "note": "Zaalkerk uit 1950 van J. Deltrap, sinds 2024 woningen",
-        "kind": "Voormalige kerk · 1950",
-        "stop": "Sint-Willibrorduskerk",
-        "at": (192080, 377790),
+        "name": "Sint-Martinuskerk",
+        "note": "Laatgotische hallenkerk met de toren van 73 m",
+        "kind": "Rijksmonument · 1456-1528",
+        "address": "Markt",
+        "stop": "Sint-Martinuskerk",
+        "at": (177316.0, 362744.5),  # the middle of the tower in AHN, 73.6 m to the top
         "style": "church",
-        "wall": (146, 80, 62),
+        "wall": (150, 100, 78),
         "roof": (70, 72, 80),
-        # Tower from AHN: about 4 m square near the north-west corner, 26 m to the top.
-        "tower": {"x": 192090.0, "y": 377807.4, "w": 4.6, "body": 19.0, "top": 25.5, "cross": True},
     },
     {
-        "name": "Protestantse kerk (1867)",
-        "note": "Neoclassicistisch zaalkerkje met dakruiter, rijksmonument",
-        "kind": "Rijksmonument · 1867",
-        "stop": "Protestantse kerk",
-        "at": (191907.3, 378307.1),
+        "name": "Museum W",
+        "note": "Het oude stadhuis aan de Markt",
+        "addrs": ["Markt 7"],
+        "kind": "Museum · voormalig stadhuis",
+        "address": "Markt 7",
+        "text": "Museum voor cultuurhistorie en hedendaagse kunst in het voormalige stadhuis, een rijksmonument. Tot 2020 heette het Gemeentemuseum Jacob van Horne, naar de graaf die Weert zijn kasteel en zijn klooster gaf. Na een verbouwing ging het in mei 2022 weer open.",
+        "more": WP + "Museum_W",
+        "photo": ("Gemeentemuseum Weert Jacob van Horne.jpg", "Het voormalige raadhuis in 2013, Smiley.toerist, CC BY-SA 3.0"),
+        "web": "https://www.museumw.nl",
+    },
+    {
+        "name": "Muntgebouw",
+        "addrs": ["Muntpromenade 7"],
+        "kind": "Rijksmonument · ca. 1580",
+        "address": "Muntpromenade 7",
+        "stop": "De Weertse munt",
+    },
+    {
+        "name": "Munttheater",
+        "latlon": (51.25399, 5.70469),
+        "kind": "Theater · 1974",
+        "text": "In 1974 opgericht als Cultureel Centrum De Munt, boven winkelcentrum de Muntpassage. De zaal en het balkon hebben samen 459 plaatsen; er komen zo'n 50.000 bezoekers per jaar.",
+        "more": WP + "Munttheater",
+        "web": "https://www.munttheater.nl",
+    },
+    {
+        "name": "Ursulinenklooster",
+        "addrs": ["Langstraat 20"],
+        "kind": "Voormalig klooster · 1876",
+        "address": "Langstraat 20",
+        "text": "Gebouwd in 1876 in Duitse neogotiek voor de zusters ursulinen, die door de Kulturkampf uit het Duitse Dorsten waren verdreven. Ze begonnen in Weert een pensionaat (1883) en een school (1895). In 1989 vertrokken de zusters; alleen het hoofdgebouw en de Mariakapel bleven staan en werden winkels.",
+        "more": WP + "Ursulinenklooster_(Weert)",
+    },
+    {
+        "name": "Abdij Maria Hart",
+        "addrs": ["Maasstraat 17"],
+        "kind": "Klooster · rijksmonument",
+        "address": "Maasstraat 17",
+        "text": "Hier werd in 1442 het klooster Maria Wijngaard gesticht, voor kanunnikessen van Augustinus. De Fransen hieven het in 1797 op. In 1843 trokken birgittinessen uit Uden erin, en dat is het nog steeds: een birgittinessenklooster, met een kapel uit 1843 aan de straat en een beeldje van de heilige Birgitta boven de poort.",
+        "more": WP + "Abdij_Maria_Hart",
+        "photo": ("Klooster Maasstraat.jpg", "Het klooster aan de Maasstraat in 2008, Thommorris, CC BY-SA 3.0"),
+    },
+    {
+        "name": "Kasteel Nijenborgh",
+        "note": "Ruïne van het kasteel van de graven van Horne",
+        "latlon": (51.25638, 5.70883),
+        "kind": "Rijksmonument · 1455-1461",
+        "stop": "De Nijenborgh",
+    },
+    {
+        "name": "Minderbroedersklooster en Paterskerk",
+        "note": "Klooster uit 1461 met de laatgotische Paterskerk",
+        "at": (177699.2, 363378.8),  # the ridge of the church in AHN
+        "kind": "Rijksmonument · 1461",
+        "address": "Biest 43",
+        "stop": "Minderbroeders op de Biest",
         "style": "church",
-        "wall": (234, 230, 218),
-        "roof": (78, 80, 88),
-        # Dakruiter on the front, seen in AHN as a spike over the canal-side end of the ridge.
-        "turret": {"x": 191911.2, "y": 378298.7, "r": 1.0, "base": 9.4, "body": 12.6, "top": 16.8},
+        "wall": (156, 96, 74),
+        "roof": (72, 74, 82),
     },
     {
-        "name": "Zondagsschool (ca. 1880)",
-        "kind": "Ca. 1880",
-        "stop": "Zondagsschool",
-        "at": (191920.1, 378300.0),
+        "name": "Station Weert",
+        "latlon": (51.24894, 5.70410),
+        "kind": "Rijksmonument · 1914",
+        "address": "Stationsplein",
+        "stop": "De IJzeren Rijn",
+    },
+    {
+        "name": "Bethelkerk",
+        "addrs": ["Maaspoort 30"],
+        "kind": "Protestantse kerk · 1912",
+        "address": "Maaspoort 30",
+        "text": "De protestanten van Weert moesten lang naar Budel lopen om te kerken. In 1852 kregen ze een eigen gemeente, die samenkwam in een pand aan de Oelemarkt. Deze achtkante zaalkerk is gebouwd van 1910 tot 1912, naar ontwerp van George van Heukelom, de architect van het station. Boven de ingang staat: Gewisselijk is de Heer aan deze plaats.",
+        "more": WP + "Bethelkerk_(Weert)",
+    },
+    {
+        "name": "Fatimahuis",
+        "addrs": ["Coenraad Abelsstraat 31A"],
+        "kind": "Voormalige kerk · 1955",
+        "address": "Coenraad Abelsstraat 31a",
+        "text": "De waaiervormige kerk van baksteen en beton gaf de wijk Fatima haar naam; daarvoor heette de arbeiderswijk Molenveld. De Weertse architect Pierre Weegels ontwierp haar en in 1955 was ze klaar. Sinds 2011 is het geen parochiekerk meer: als Fatimahuis heeft het gebouw een sociaal en cultureel doel, en op zondag viert de Eritrees-orthodoxe kerk er de dienst.",
+        "more": WP + "Onbevlekt_Hart_van_Mariakerk_(Weert)",
+    },
+    {
+        "name": "Kapel van de paters van de Heilige Geest",
+        "addrs": ["Coenraad Abelsstraat 36"],
+        "kind": "Moskee · kapel uit 1911",
+        "address": "Coenraad Abelsstraat 36",
+        "text": "De paters van de Heilige Geest kwamen in 1904 uit Lier naar Weert om missionarissen op te leiden; hun internaat groeide van dertig naar zo'n tweehonderd leerlingen. De kapel, ontworpen door Pierre Cuypers jr., was klaar in 1911. Het internaat sloot in 1970 en het missiehuis is gesloopt, maar de kapel bleef: het is nu de Turkse moskee.",
+        "more": WP + "Klooster_van_de_Paters_van_de_Heilige_Geest",
+        "photo": ("'Turkse moskee' Coenraad Abelstraat Weert.jpg", "De kapel als moskee in 2012, FaceMePLS, CC BY 2.0"),
+    },
+    {
+        "name": "Molen Sint Oda",
+        "at": (176497.2, 362938.2),  # the cap of the mill in AHN
         "style": "house",
-        "wall": (152, 86, 66),
-        "roof": (82, 84, 90),
-        "frame": (236, 234, 226),
+        "wall": (128, 76, 58),
+        "roof": (58, 60, 66),
+        "kind": "Rijksmonument · 1883",
+        "address": "Suffolkweg",
+        "text": "Ronde bakstenen beltmolen uit 1883, genoemd naar de heilige Oda. Tot 2002 maalde de molenaar hier voor zijn beroep rogge en boekweit. Daarna stond de molen stil, tot hij in 2008 weer draaide.",
+        "more": WP + "Sint_Oda_(molen)",
+        "photo": ("Weert StOda.jpg", "Molen Sint Oda in 2008, Groucho M, CC BY-SA 3.0"),
     },
     {
-        "name": "Pastorie (1867)",
-        "note": "Predikantenwoning, rijksmonument",
-        "kind": "Rijksmonument · 1867",
-        "stop": "Pastorie en kazemat",
-        "at": (191902.6, 378289.2),
+        "name": "Molen Wilhelmus-Hubertus",
+        "at": (176974.2, 363402.2),  # the cap of the mill in AHN
         "style": "house",
-        "wall": (150, 90, 70),
-        "roof": (66, 68, 74),
-        "frame": (240, 238, 230),
+        "wall": (128, 76, 58),
+        "roof": (58, 60, 66),
+        "kind": "Rijksmonument · 1904",
+        "address": "Oude Hushoverweg 30",
+        "text": "Beltmolen uit 1904, gebouwd nadat de standerdmolen op deze plek door de bliksem was getroffen en afbrandde. Hij maalde tot vlak voor de Tweede Wereldoorlog. Bij de restauratie van 1961 kreeg hij zijn naam, naar de opa van de molenbouwer. Nu is het een restaurant; de molen kan nog draaien.",
+        "more": WP + "Wilhelmus-Hubertus",
+        "photo": ("Weert, Wilhelmus-Hubertus, beltmolen 02a.JPG", "De Wilhelmus-Hubertus in 2008, Noorse, CC BY-SA 3.0"),
     },
     {
-        "name": "Basisschool De Peelparel",
-        "note": "Dorpsschool met zes lokalen uit ca. 1930",
-        "kind": "Basisschool",
-        "address": "Oude Peelstraat 10",
-        "web": "https://www.peelparel.nl",
-        "stop": "Dorpsschool De Peelparel",
-        "at": (191907.0, 377855.0),
-        "style": "school",
-        "wall": (176, 112, 96),
-        "roof": (186, 90, 60),
-        "bell": True,
+        "name": "Boonesmolen",
+        "addrs": ["Julianalaan 24"],
+        "kind": "Molenromp · 1855",
+        "address": "Julianalaan 24",
+        "text": "Van deze koren-, pel- en oliemolen uit 1855 staat alleen de romp nog. Hij heet naar de familie Boonen, eigenaar van 1863 tot 1927. Toen de buurt achter het station volgebouwd raakte, ving de molen steeds minder wind; in de zware storm van 9 februari 1949 brak de as. Daarna stond er een grote reclame voor Blue Band op de romp. De kap ging er in 1968 af.",
+        "more": WP + "Boonesmolen",
     },
     {
-        "name": "Hoeve Willem III",
-        "note": "Kop-rompboerderij uit 1913, rijksmonument, nu ijsboerderij",
-        "kind": "Koningshoeve · 1913",
-        "address": "Soemeersingel 127",
-        "stop": "Willem III-hoeve",
-        "at": (190290.0, 381292.0),
-        "style": "house",
-        "wall": (126, 70, 56),
-        "roof": (74, 76, 82),
-        "frame": (238, 236, 228),
+        "name": "Sint-Rumolduskapel",
+        "latlon": (51.25435, 5.70101),
+        "kind": "Rijksmonument · ca. 1775",
+        "address": "Molenpoort",
+        "text": "Al rond 1400 stond hier, buiten de Molenpoort, een kapel waar Sint-Rumoldus werd aangeroepen tegen kwade ogen, keelpijn en veeziekten. Het kapelletje van nu is uit de 18e eeuw; de linden eromheen zijn in 1838 geplant. Sinds de restauratie van 1975 is het de gedachteniskapel voor de Weertenaren die in de Tweede Wereldoorlog omkwamen, met een kunstwerk van Felix van Kalmthout: Opdat wij niet vergeten.",
+        "more": WP + "Sint-Rumolduskapel_(Weert)",
+        "photo": ("Aanzicht - Weert - 20251897 - RCE.jpg", f"De kapel in 1964, G.Th. Delemarre, {RCE}"),
     },
     {
-        "name": "Wilhelminahoeve",
-        "note": "Kop-rompboerderij uit 1908, rijksmonument",
-        "kind": "Koningshoeve · 1908",
-        "stop": "Wilhelminahoeve",
-        "at": (191131.0, 380087.0),
-        "style": "house",
-        "wall": (130, 72, 58),
-        "roof": (78, 80, 86),
-        "frame": (238, 236, 228),
+        "name": "Sint-Jozefkerk",
+        "at": (176911.8, 361369.2),  # the tower in AHN, 45 m to the top
+        "kind": "Rijksmonument · 1939",
+        "address": "Sint Jozefskerkplein 1",
+        "text": "Neoromaanse bakstenen kerk van Alphons Boosten uit 1939, met een toren van 45 meter. Ze is gebouwd voor de wijk Keent, waar de militairen van de nieuwe Van Hornekazerne kwamen te wonen.",
+        "more": WP + "Sint-Jozefkerk_(Weert)",
+        "photo": ("Kerk Keent.jpg", "De Sint-Jozefkerk in 2009, Thommorris, CC BY-SA 3.0"),
+        "style": "church",
+        "wall": (164, 110, 84),
+        "roof": (74, 76, 84),
     },
     {
-        "name": "Gemeenschapshuis De Gouden Helm",
-        "latlon": (51.38802, 5.91843),
-        "address": "Oude Peelstraat 3",
-        "web": "https://www.degoudenhelm.nl",
-        "stop": "Gemeenschapshuis De Gouden Helm",
+        "name": "Van Hornekazerne",
+        "addrs": ["Kazernelaan 101"],
+        "kind": "Kazerne · 1938",
+        "address": "Kazernelaan 101",
+        "stop": "Kazerne en kazematten",
     },
     {
-        "name": "Hotel Eetcafé In d'Ouwe Peel",
-        "latlon": (51.38892, 5.91938),
-        "kind": "Hotel en eetcafé",
-        "address": "Oude Peelstraat 2",
-        "text": "Hotel en eetcafé midden in het dorp, tegenover de kerk.",
-        "web": "https://www.indouwepeel.nl",
-    },
-    {"name": "Voormalige tabaksschuur (ca. 1870)", "addrs": ["Geldersestraat 10", "Geldersestraat 12"], "kind": "Tabaksschuur · ca. 1870", "address": "Geldersestraat 10 en 12", "stop": "Tabaksschuur"},
-    # From Het Helenaveen van toen; the 3D BAG building years agree that these still stand.
-    {
-        "name": "Tabaksschuur Waldeck-Hoeve",
-        "addrs": ["Geldersestraat 3", "Geldersestraat 5"],
-        "kind": "Tabaksschuur",
-        "address": "Geldersestraat 3 en 5",
-        "text": "Een van de grote tabaksschuren aan de Geldersestraat, toen nog de Geldersche Laan. Een tijd stond de naam Waldeck-Hoeve op de zijgevel; nu zijn het twee huizen. Op de kaart van 1889 is de omgeving geel van de tabaksvelden.",
-        "more": HVT + "de-kaar-van-deel-1",
+        "name": "Verrezen Christuskerk",
+        "latlon": (51.24362, 5.70912),
+        "kind": "Kerk · 1972",
+        "address": "Oranjeplein",
+        "text": "De kerk van de nieuwbouwwijk Moesel, die in 1963 een eigen rectoraat kreeg. Eerst diende de Moeselkapel als noodkerk, daarna een houten noodkerk aan de Christinelaan. Het lage bakstenen gebouw met plat dak en zonder toren, van architect P.W.J. Coenders, was klaar in 1972. Gène Eggen maakte de wand van glas in lood.",
+        "more": WP + "Verrezen_Christuskerk_(Weert)",
     },
     {
-        "name": "Tabaksschuur Geldersestraat 4 en 6",
-        "addrs": ["Geldersestraat 4", "Geldersestraat 6"],
-        "kind": "Tabaksschuur",
-        "address": "Geldersestraat 4 en 6",
-        "text": "Schuin tegenover de Waldeck-Hoeve staat de volgende grote tabaksschuur van de Geldersestraat, uit de tijd dat hier tabak werd geteeld.",
-        "more": HVT + "de-kaar-van-deel-1",
+        "name": "Moeselkapel",
+        "latlon": (51.24169, 5.71635),
+        "kind": "Kapel · 1912",
+        "address": "Irenelaan",
+        "text": "Kapel uit 1912 aan het Moeselplein, gewijd aan Onze-Lieve-Vrouw van Lourdes. Toen de wijk Moesel in de jaren zestig werd gebouwd, was dit even de noodkerk.",
+        "more": WP + "Moeselkapel",
     },
     {
-        "name": "Woonhuis van Jules de Corte",
-        "addrs": ["Geldersestraat 9"],
-        "kind": "Woonhuis",
-        "address": "Geldersestraat 9",
-        "text": "Zanger, pianist en liedjesschrijver Jules de Corte (1924-1996) woonde hier vanaf 1973 tot zijn dood, en werkte er vaak tot diep in de nacht aan zijn liedjes. Hij schreef er ruim 4000, waaronder Ik zou wel eens willen weten en Koning Onbenul.",
-        "more": HVT + "jules-de-corte",
-    },
-    {
-        "name": "Zuivelfabriekje De Fuke",
-        "addrs": ["Helenastraat 18"],
-        "kind": "Ca. 1896",
-        "address": "Helenastraat 18",
-        "text": "Martinus van de Mortel, Tinus de Fauts, begon hier een fabriekje voor roomboter, De Fuke. Het was niet rendabel genoeg en ging al snel weer dicht. Het gebouw staat er nog en is nu een woonhuis.",
-        "more": HVT + "geschiedenis-in-jaartallen",
-    },
-    # The other koningshoeven, from OpenStreetMap (names, BAG building years) and the Rijksmonumenten register.
-    {"name": "Emmahoeve", "latlon": (51.42026, 5.89746), "kind": "Koningshoeve · rijksmonument", "stop": "Emmahoeve"},
-    {
-        "name": "Julianahoeve",
-        "latlon": (51.41126, 5.90111),
-        "kind": "Koningshoeve · 1910",
-        "address": "Soemeersingel 107",
-        "text": "In 1910 bouwde de Maatschappij twee koningshoeven die bijna elkaars evenbeeld zijn: de Emmahoeve en deze Julianahoeve, die in 1911 klaar was. De eerste pachter was Johannes Dekker uit Noord-Holland. Nu is het Landgoed Julianahoeve, met een camping.",
-        "more": HVT + "de-juliana-hoeve",
-        "photo": ("Julianahoeve,_voor-_en_linker_zijgevel_-_Helenaveen_-_20107512_-_RCE.jpg", "De Julianahoeve in 1979, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0"),
-        "web": "https://www.landgoed-julianahoeve.nl",
-    },
-    {
-        "name": "Oranjehoeve",
-        "latlon": (51.40502, 5.91000),
-        "kind": "Koningshoeve · 1912",
-        "address": "Soemeersingel 87",
-        "text": "De Maatschappij Helenaveen bouwde deze koningshoeve in 1912, aan de Helenavaart bij het drooggelegde Soemeer, op de plek van een huis dat er in 1889 al stond. Tegenwoordig een groepsaccommodatie.",
-        "more": HVT + "de-kaar-van-deel-1",
-        "photo": ("Oranjehoeve_-_Helenaveen_-_20107510_-_RCE.jpg", "De Oranjehoeve in 1979, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0"),
-        "web": "https://www.oranjehoeve.com/",
-    },
-    {
-        "name": "Jeugdgebouw De Wiek",
-        "addrs": ["Soemeersingel 31"],
-        "kind": "Voormalige school",
-        "address": "Soemeersingel 31",
-        "text": "Tot 1982 was dit de openbare lagere school De Zonnedauw, die er kwam toen de andere school van het dorp katholiek werd. Sinds 21 mei 1983 is het jeugdgebouw De Wiek, genoemd naar de wijken: de zijtakken van de peelkanalen waar turfschepen konden keren of aanleggen. Op de gevel zit een keramisch reliëf van de Deurnese kunstenaar Frans Jacobs, gemaakt bij De Porceleyne Fles.",
-        "more": HVT + "monumenten-en-kunst",
-    },
-    # Casemate 206S of the Peel-Raamstelling (OpenStreetMap way 949470200, BAG building from 1938).
-    {
-        "name": "Kazemat 206",
-        "at": (191902.8, 378260.3),
-        "kind": "Kazemat · 1938",
-        "text": "Een betonnen kazemat van de Peel-Raamstelling, van het type dat stekelvarken heet. Aan deze kant van de vaart stonden er drie, tussen de protestantse kerk en de Geldersestraat, bemand door soldaten van het 30ste Regiment Infanterie. Alleen nummer 206 staat er nog.",
-        "more": HVT + "de-peel-onder-vuur",
-    },
-    {"name": "Willem de Zwijgerhoeve", "latlon": (51.39099, 5.91658), "kind": "Boerderij · 1934"},
-    {"name": "Wehrmachthuisje", "at": (191577.0, 379760.0), "address": "Koolweg 40", "stop": "Het Wehrmachthuisje aan de Koolweg"},
-    {"name": "Keuterboerderij", "at": (191630.7, 379389.2), "kind": "Rijksmonument", "address": "Soemeersingel 75", "stop": "Keuterboerderij aan de Soemeersingel"},
-    # Businesses, from OpenStreetMap.
-    {
-        "name": "Cafetaria Van Veen",
-        "latlon": (51.38962, 5.91891),
-        "kind": "Cafetaria",
-        "address": "Dominee Swaluestraat 1",
-        "text": "De snackbar van het dorp: friet om mee te nemen, of op het terras.",
-    },
-    {
-        "name": "Esso Helenaveen",
-        "latlon": (51.37943, 5.90877),
-        "kind": "Tankstation",
-        "address": "Zinkskesweg 1",
-        "text": "Tankstation aan de A67, met een Spar express.",
+        "name": "Meelfabriek",
+        "at": (176224.0, 362671.0),  # the 35 m tall factory of 1928 in 3D BAG
+        "kind": "Rijksmonument · 1928",
+        "address": "Industriekade 38",
+        "text": "Meelfabriek pal aan de Zuid-Willemsvaart, met een havenkraan aan de kade om de schepen te lossen. Het complex is een rijksmonument.",
+        "photo": ("Overzicht vanuit het oosten met havenkraan, rechts de Zuid-Willemsvaart - Weert - 20347947 - RCE.jpg", f"De meelfabriek met de havenkraan in 2003, IJsbrand Heins, {RCE}"),
     },
 ]
 
 # Points without a building of their own.
 POINTS = [
+    {"name": "Markt", "latlon": (51.25340, 5.70655), "kind": "Plein", "stop": "Marktrechten"},
+    {"name": "Stadsbrug", "latlon": (51.25785, 5.70363), "kind": "Hefbrug · 1968", "stop": "De Zuid-Willemsvaart"},
     {
-        "name": "Monument voor de burgerslachtoffers",
-        "latlon": (51.38868, 5.91955),
-        "kind": "Oorlogsmonument · 1985",
-        "text": "Voor de inwoners die door deportatie of oorlogsgeweld omkwamen, onthuld op 4 mei 1985. Twee muurtjes staan voor de fundamenten van het dorp, die de oorlog doorstonden; daartegen rust een driehoekige steen als een dak, met 22 namen.",
-        "more": HVT + "monumenten-en-kunst",
+        "name": "Biesterbrug",
+        "latlon": (51.26137, 5.71400),
+        "kind": "Ophaalbrug · 1997",
+        "text": "De Beesterbrök verbindt de Biest met Molenakker. Voor die wijk er lag, liep hier de weg van de stad naar het kerkdorp Laar. De ophaalbrug van nu is in 1997 gebouwd op de plek van een oude gietijzeren brug van hetzelfde type.",
+        "more": WP + "Biesterbrug",
+        "photo": ("Biesterbrug.jpg", "De Biesterbrug in 2009, Weertenaar, CC BY-SA 3.0"),
     },
-    {"name": "Beeld: de jager die het zwijn doodde", "latlon": (51.3887, 5.91966), "kind": "Oorlogsmonument · 1956", "stop": "De jager die het zwijn doodde"},
-    {"name": "Kunstwerk: kiepkarren met turf", "latlon": (51.38868, 5.91982), "kind": "Kunstwerk · 1978", "stop": "Kipkarren op het Kerkplein"},
-    {"name": "Borstbeeld koningin Juliana", "latlon": (51.38939, 5.91762), "kind": "Beeld", "stop": "Koningin Juliana"},
-    # The BGT art object on the corner of the green next to the church; AHN shows a 6 m tall structure there.
+    {"name": "Kleipijpenoven", "latlon": (51.26181, 5.71409), "kind": "Rijksmonument · 1856", "address": "Noordkade", "stop": "Kleipijpen van Trumm-Bergmans"},
+    {"name": "Scheepswerf", "latlon": (51.26305, 5.72001), "kind": "Scheepswerf · 1907", "stop": "De Weerter kempenaar"},
+    {"name": "Keltische Schans", "latlon": (51.26427, 5.71452), "kind": "Archeologische vindplaats", "stop": "De Keltische Schans"},
+    {"name": "Aldenborgh", "latlon": (51.25927, 5.71247), "kind": "Verdwenen kasteel · ca. 1290", "stop": "De Aldenborgh"},
+    {"name": "Standbeeld Philips de Montmorency", "latlon": (51.25719, 5.70936), "kind": "Standbeeld", "stop": "De graaf van Horne onthoofd"},
+    {"name": "Suffolk-monument", "latlon": (51.25781, 5.70321), "kind": "Oorlogsmonument · 2002", "stop": "Bevrijd door de Suffolks"},
+    {"name": "Verzetsmonument", "latlon": (51.25410, 5.70330), "kind": "Oorlogsmonument · 2022"},
     {
-        "name": "Jules de Corte-carillon",
-        "at": (192040.6, 377827.6),
-        "kind": "Carillon · 1975",
-        "address": "Hannes Joostenplein",
-        "text": "Op het grasveld naast de kerk hangt een carillon met 23 klokken van Eijsbouts uit Asten, betaald door het Koning Willem III-fonds. Bij de opening op 6 december 1975 begeleidde Jules de Corte de dorpsjeugd bij Hertog Jan: zijn debuut als beiaardier. Sinds 1996 draagt het carillon zijn naam, met op een bronzen plaat zijn regel: In de oude toren zingt het carillon.",
-        "more": HVT + "monumenten-en-kunst",
-    },
-    # The only BGT art object along the Pastoor Kerssemakersstraat.
-    {
-        "name": "Kunstwerk: Vierzijdige Driehoek",
-        "at": (191844.4, 377965.9),
-        "kind": "Kunstwerk · 1990",
-        "address": "Pastoor Kerssemakersstraat",
-        "text": "Stalen balken in rood, blauw en geel, van de Bredase kunstenaar Norbert Veeger. Burgemeester Van Genabeek onthulde het op 23 januari 1990.",
-        "more": HVT + "monumenten-en-kunst",
-    },
-    {"name": "Speeltuin 't Turfveldje", "latlon": (51.38773, 5.91842), "kind": "Speeltuin"},
-    # Aardbeiweg 2 is the Protestant cemetery, Aardbeiweg 4 the Catholic one (rijksmonumenten register, Wikidata).
-    {"name": "Protestantse begraafplaats (ca. 1885)", "latlon": (51.38613, 5.91274), "kind": "Rijksmonument", "stop": "Protestantse begraafplaats"},
-    {"name": "Katholieke begraafplaats", "latlon": (51.38511, 5.91346), "kind": "Begraafplaats", "stop": "Het katholieke kerkhof"},
-    {"name": "Sportpark", "latlon": (51.38566, 5.91100), "kind": "Sport"},
-    {
-        "name": "Romeins tempeltje",
-        "latlon": (51.39051, 5.90431),
-        "kind": "Monument · 1998",
-        "text": "Op de vindplaats van de Gouden Helm, die hier in 1910 uit het veen kwam. Joep Coppens maakte het tempeltje van basaltlava, brons en baksteen. In de gevel staat E PALUDE EMERGO: ik kwam boven uit het veen.",
-        "more": HVT + "monumenten-en-kunst",
-        "stop": "De Gouden Helm",
-    },
-    {"name": "Eijndepaal", "latlon": (51.38475, 5.93129), "kind": "Grenspaal"},
-    {"name": "Paal tussen Broemeer en Soemeer", "latlon": (51.40279, 5.91580), "kind": "Grenspaal"},
-    {"name": "Zendmast", "latlon": (51.37999, 5.90874), "kind": "Telecommast"},
-    {"name": "Camping De Peelkant", "latlon": (51.39878, 5.8964), "kind": "Camping", "address": "Centurioweg 7", "web": "https://www.peelkant.com/"},
-    {"name": "Camping de Peelweide", "latlon": (51.37558, 5.93315), "kind": "Camping", "address": "Spiesberg 23", "web": "https://www.peelweide.nl"},
-    {"name": "Camperplaats De Oude Hoeven", "latlon": (51.40924, 5.90605), "kind": "Camperplaats"},
-    {"name": "Brug Spiesberg", "latlon": (51.37756, 5.93492), "kind": "Brug"},
-    # Komoot's description of the monument, from its makers.
-    {
-        "name": "Herrezen uit de vergetelheid",
-        "latlon": (51.40615, 5.91761),
-        "kind": "Monument · 2021",
-        "text": "Voor de 21 mannen die tussen 1940 en 1954 omkwamen bij vijf vliegtuigcrashes in de Peel. Het monument geeft namen aan slachtoffers die lang anoniem bleven. Een initiatief van Piet Snellen en Sjaar Huijs, ontworpen door Ruud van der Beele en onthuld in oktober 2021.",
+        "name": "Kazematten aan de Noordkade",
+        "latlon": (51.25926, 5.70610),
+        "kind": "Rijksmonumenten · 1939",
+        "address": "Noordkade",
+        "text": "De Peel-Raamstelling, in 1939 aangelegd, liep van de Maas bij Grave door de Peel en langs de Zuid-Willemsvaart tot de Belgische grens bij Weert. Langs het kanaal stonden de betonnen kazematten om de tweehonderd meter, vooral bij de bruggen. Aan de Noordkade staan er nog drie. In de ochtend van 11 mei 1940 is bij Weert kort gevochten; toen was de stelling al gevallen.",
+        "more": WP + "Peel-Raamstelling",
     },
     {
-        "name": "Sporen die bleven",
-        "latlon": (51.40314, 5.91352),
-        "kind": "Oorlogsmonument · 1944-2004",
-        "text": "Voor de kerkrazzia van 8 oktober 1944. Uit Helenaveen werden 143 mensen weggevoerd; 26 mannen overleefden de oorlog niet. Het hoort bij een reeks die in 2004 in 45 dorpen tussen Maas en Peel werd geplaatst; kunstsmid Thijs van de Manakker maakte de smeedijzeren standaard.",
-        "more": HVT + "monumenten-en-kunst",
+        "name": "Sint-Martinuskerkhof",
+        "latlon": (51.25458, 5.70131),
+        "kind": "Begraafplaats",
+        "address": "Molenpoort",
+        "text": "Het kerkhof van de Sint-Martinuskerk ligt een paar honderd meter van de kerk, buiten de oude Molenpoort, naast de Sint-Rumolduskapel. Er is ook een urnenmuur.",
+        "more": WP + "Sint-Martinuskerkhof_(Weert)",
+        "photo": ("A Winters Day (3176450077).jpg", "Het kerkhof aan de Molenpoort in de winter van 2009, FaceMePLS, CC BY 2.0"),
     },
     {
-        "name": "Mijmerplek met de Hellehond",
-        "latlon": (51.40699, 5.90938),
-        "kind": "Kunstwerk",
-        "text": "Hier stond een Koningswoning, in 1888 gebouwd met een schenking van koning Willem III en in 1921 verwoest door een grote veenbrand. Op initiatief van Jan van Woezik is de oude huisput weer uitgegraven, met de Hellehond van de Helenaveense kunstenaar Dirk Verberne.",
-        "more": HVT + "monumenten-en-kunst",
+        "name": "Muurschildering: Ik, Philips van Horne, mag graag op reis gaan",
+        "latlon": (51.25268, 5.70759),
+        "kind": "Muurschildering · 2018",
+        "text": "Een van de muurschilderingen die in 2018 in de binnenstad zijn gemaakt, 450 jaar na de dood van Philips de Montmorency, graaf van Horne.",
+        "photo": ("Muurschildering Philips van Horne Weert 05.jpg", "De muurschildering in 2020, FrDr, CC BY-SA 4.0"),
     },
     {
-        "name": "Mijnenongeluk 1945",
-        "latlon": (51.38751, 5.91419),
-        "kind": "Oorlog",
-        "text": "Op 19 mei 1945 ruimden Frans van den Eijnden uit Liessel en korporaal Meindert Postma uit Drachten hier mijnen, waar de Lagebrugweg en de Oude Peelstraat samenkomen. Een springmijn ging af en beiden kwamen om.",
-        "more": HVT + "mijnenruimen-aan-de-lagebrugweg",
-    },
-    # Places that are gone.
-    {
-        "name": "Eerste school van Helenaveen",
-        "latlon": (51.38540, 5.92277),
-        "kind": "1861",
-        "text": "In 1861 stelde de Maatschappij hier, op de hoek van de Geldersestraat en de Jan Deckersstraat, een gebouwtje beschikbaar als eerste school. Aan de overkant lag de scheepstimmerwerf. Het was maar een tijdelijke oplossing: al snel kwam er een nieuwe school.",
-        "more": HVT + "scholen",
+        "name": "Muurschildering: Ik, Philips van Horne, smeek om vergeving",
+        "latlon": (51.25162, 5.70455),
+        "kind": "Muurschildering · 2018",
+        "text": "De onthoofding van Philips van Horne in Brussel, op 5 juni 1568. Een van de muurschilderingen die in 2018 in de binnenstad zijn gemaakt, 450 jaar na zijn dood.",
+        "photo": ("Muurschildering 'de onthoofding van Philips van Horne' Weert 01.jpg", "De muurschildering in 2020, FrDr, CC BY-SA 4.0"),
     },
     {
-        "name": "Eerste noodkerk en kerkhof",
-        "addr": "Fruitweg 2",
-        "kind": "1857",
-        "text": "Aan de Fruitweg werd in 1857 een katholieke noodkerk ingericht in de omgebouwde stal van een boerderij. Erbij lag het eerste kerkhof van Helenaveen, zo'n 20 bij 25 meter, waar 35 mensen werden begraven.",
-        "more": HVT + "kerkhof",
+        "name": "Muurschildering: Wij, liga der groten, nodigen U uit",
+        "latlon": (51.25404, 5.70505),
+        "kind": "Muurschildering · 2018",
+        "text": "Bourgondische heren aan tafel, met Walburgis van Nieuwenaer, de vrouw van Philips van Horne. Een van de muurschilderingen die in 2018 in de binnenstad zijn gemaakt.",
+        "photo": ("Muurschildering 'Bourgondische heren' Weert 04.jpg", "De muurschildering in 2020, FrDr, CC BY-SA 4.0"),
     },
-    {"name": "Turfstrooiselfabriek", "at": (191854.0, 378594.0), "kind": "Rijksmonument, afgebrand in 2025", "stop": "Turfstrooiselfabriek"},
-    {"name": "Kunstwerk: Verleden Veen", "at": (192068.0, 377892.0), "kind": "Kunstwerk · 2006", "stop": "Verleden Veen"},
-    {"name": "Kunstwerk: Peeltroef", "at": (190176.0, 381262.0), "kind": "Kunstwerk · 2014", "stop": "Peeltroef"},
+    {"name": "Kunstwerk: On the Shoulder of Giants", "latlon": (51.25659, 5.70112), "kind": "Kunstwerk", "text": "Beeld van Studio Job."},
+    {
+        "name": "Vastelaovundj-monumênt",
+        "latlon": (51.24998, 5.71790),
+        "kind": "Kunstwerk · 2015",
+        "text": "Monument voor de vastelaovendj van Jan van Riet. Met carnaval heten de Weertenaren Rogstaekers, naar een sage uit 1653: een voerman verloor in Laar een rog, en de Weertenaren, die zo'n beest nooit hadden gezien, hielden hem met zijn valse ogen en pijlstaart voor de duivel. De klokken luidden, de schutterij rukte uit en er kwam een kanon bij. Jan, de zoon van de waard van 't Bruyne Paerd, stak het beest ten slotte aan zijn riek. Toen kwam de voerman terug en lachte hen hartelijk uit.",
+        "more": WP + "Rogstaekers",
+    },
+    {"name": "Heilig Hartbeeld", "latlon": (51.25099, 5.70640), "kind": "Beeld", "text": "Heilig Hartbeeld van de beeldhouwer August Falise."},
 ]
 
-# Series in the viewer's panel: a walk past these places, starting with the one nearest the village.
+# Series in the viewer's panel: a walk past these places, starting with the one nearest the middle of the map.
 CATEGORIES = [
-    ("koningshoeven", "Koningshoeven", ["Wilhelminahoeve", "Emmahoeve", "Julianahoeve", "Oranjehoeve", "Hoeve Willem III"]),
-    ("historisch", "Historische gebouwen", [
-        "Protestantse kerk (1867)", "Pastorie (1867)", "Zondagsschool (ca. 1880)", "Voormalige tabaksschuur (ca. 1870)",
-        "Keuterboerderij", "Basisschool De Peelparel", "Sint-Willibrorduskerk", "Protestantse begraafplaats (ca. 1885)",
-        "Tabaksschuur Waldeck-Hoeve", "Tabaksschuur Geldersestraat 4 en 6", "Woonhuis van Jules de Corte", "Zuivelfabriekje De Fuke",
-        "Jeugdgebouw De Wiek",
+    ("horne", "De graven van Horne", [
+        "Kasteel Nijenborgh", "Aldenborgh", "Minderbroedersklooster en Paterskerk", "Sint-Martinuskerk", "Muntgebouw", "Museum W",
+        "Standbeeld Philips de Montmorency", "Muurschildering: Ik, Philips van Horne, mag graag op reis gaan",
+        "Muurschildering: Ik, Philips van Horne, smeek om vergeving", "Muurschildering: Wij, liga der groten, nodigen U uit",
     ]),
-    ("oorlog", "Oorlog en herdenking", [
-        "Monument voor de burgerslachtoffers", "Beeld: de jager die het zwijn doodde", "Mijnenongeluk 1945", "Wehrmachthuisje",
-        "Sporen die bleven", "Herrezen uit de vergetelheid", "Kazemat 206",
+    ("kerken", "Kerken en kloosters", [
+        "Sint-Martinuskerk", "Abdij Maria Hart", "Ursulinenklooster", "Minderbroedersklooster en Paterskerk", "Bethelkerk",
+        "Sint-Rumolduskapel", "Fatimahuis", "Kapel van de paters van de Heilige Geest", "Sint-Jozefkerk", "Verrezen Christuskerk", "Moeselkapel",
     ]),
+    ("kanaal", "Langs het kanaal", ["Stadsbrug", "Suffolk-monument", "Kazematten aan de Noordkade", "Biesterbrug", "Kleipijpenoven", "Scheepswerf", "Meelfabriek"]),
+    ("molens", "Molens", ["Molen Sint Oda", "Molen Wilhelmus-Hubertus", "Boonesmolen"]),
+    ("oorlog", "Oorlog en herdenking", ["Sint-Rumolduskapel", "Verzetsmonument", "Suffolk-monument", "Kazematten aan de Noordkade", "Van Hornekazerne"]),
     ("kunst", "Kunst", [
-        "Kunstwerk: kiepkarren met turf", "Beeld: de jager die het zwijn doodde", "Borstbeeld koningin Juliana", "Kunstwerk: Verleden Veen",
-        "Kunstwerk: Peeltroef", "Mijmerplek met de Hellehond", "Romeins tempeltje", "Jules de Corte-carillon",
-        "Kunstwerk: Vierzijdige Driehoek",
-    ]),
-    ("verdwenen", "Verdwenen", ["Eerste school van Helenaveen", "Eerste noodkerk en kerkhof", "Turfstrooiselfabriek"]),
-    ("bedrijven", "Bedrijven", [
-        "Hotel Eetcafé In d'Ouwe Peel", "Cafetaria Van Veen", "Hoeve Willem III", "Oranjehoeve", "Julianahoeve", "Camping De Peelkant",
-        "Camping de Peelweide", "Camperplaats De Oude Hoeven", "Esso Helenaveen",
+        "Muurschildering: Wij, liga der groten, nodigen U uit", "Muurschildering: Ik, Philips van Horne, mag graag op reis gaan",
+        "Muurschildering: Ik, Philips van Horne, smeek om vergeving", "Standbeeld Philips de Montmorency", "Kunstwerk: On the Shoulder of Giants",
+        "Heilig Hartbeeld", "Vastelaovundj-monumênt",
     ]),
 ]
 
 # What the viewer shows when a place is clicked; the rest of an entry is for the render.
 INFO = ("note", "kind", "text", "address", "web", "more", "photo", "stop")
 
-# A steel lattice telecom mast next to the A67 (three antenna entries in OSM, one structure in AHN).
-MASTS = [{"latlon": (51.37999, 5.90874), "height": 32.0, "base": 2.6, "tip": 0.7}]
+# Steel lattice telecom masts: {"latlon": (lat, lon), "height": m, "base": m, "tip": m}.
+MASTS = []
 
 
 def point_in_ring(x, y, ring):
@@ -354,7 +323,7 @@ def address_xy(name):
     """RD position of a BAG address such as "Geldersestraat 3" (data/raw/addresses.json, from scripts/fetch.py)."""
     global ADDRESSES
     if ADDRESSES is None:
-        ADDRESSES = {label.replace(", Helenaveen", "").split(", ")[0]: (x, y) for x, y, label in json.loads((RAW / "addresses.json").read_text())}
+        ADDRESSES = {label.split(", ")[0]: (x, y) for x, y, label in json.loads((RAW / "addresses.json").read_text())}
     return ADDRESSES[name]
 
 

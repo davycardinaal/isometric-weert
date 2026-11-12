@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the isometric map of Helenaveen from open data, end to end.
+# Build the isometric map of Weert from open data, end to end.
 #   ./build.sh            fetch, preprocess, render at 4 px/m, cut Deep Zoom tiles into site/
 #   SCALE=3 ./build.sh    render at another resolution (update SCALE/WIDTH/HEIGHT in viewer/index.html to match)
 set -euo pipefail
@@ -17,7 +17,7 @@ SCALE="${SCALE:-4}"
 (builtin cd scripts && uv run --quiet build_traffic.py)
 (builtin cd scripts && python3 build_history.py)
 
-[ -d node_modules ] || bun install
+[ -d node_modules ] || { command -v bun >/dev/null && bun install || npm install; }
 # Every view in scripts/config.py, each with the mask of buildings and trees that the viewer draws again over the
 # cars and walkers behind them.
 VIEWS=$(builtin cd scripts && python3 -c "from config import VIEWS; print(*VIEWS)")
