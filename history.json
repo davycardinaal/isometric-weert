@@ -1,0 +1,323 @@
+{
+ "stops": [
+  {
+   "n": 1,
+   "year": "1062",
+   "title": "Het eiland van Weert",
+   "text": "Weert is een waard: een hoog en droog stuk land tussen de Peelmoerassen, waar de wegen over de hei en het veen samenkwamen. De plaats wordt voor het eerst genoemd in een oorkonde uit 1062. Al veel eerder woonden hier mensen: op de Boshoverheide ligt een groot urnenveld uit de late bronstijd.",
+   "x": 177294.4,
+   "y": 362722.7,
+   "h": 0,
+   "zoom": 0.25,
+   "source": {
+    "label": "Wikipedia: Weert",
+    "url": "https://nl.wikipedia.org/wiki/Weert_(stad)"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Weert_(stad)",
+   "photos": []
+  },
+  {
+   "n": 2,
+   "year": "1414",
+   "title": "Marktrechten",
+   "text": "In 1414 kreeg Weert marktrechten. Onder de bescherming van de graven van Horne bloeide de stad tussen 1450 en 1550, vooral door het laken dat hier werd geweven. Uit die tijd is de kerk aan de Markt.",
+   "x": 177294.4,
+   "y": 362722.7,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Weert",
+    "url": "https://nl.wikipedia.org/wiki/Weert_(stad)"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Weert_(stad)",
+   "photos": []
+  },
+  {
+   "n": 3,
+   "year": "1456-1528",
+   "title": "Sint-Martinuskerk",
+   "text": "Een laatgotische hallenkerk: drie beuken van gelijke hoogte onder één dak. Nederland heeft er nog twee, deze en de Grote Kerk in Zwolle. Het koor was klaar in 1456, het schip in 1512, en in 1528 begon de bouw van de toren. De gewelven zijn van voor tot achter beschilderd. In 1887 kreeg de toren een spits tot 104,80 meter, toen de op twee na hoogste van Nederland. In een najaarsstorm van 1940 stortte die naar beneden. De bekroning van nu, van Theo Verlaan, is uit 1960.",
+   "x": 177316.0,
+   "y": 362744.5,
+   "h": 30,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Sint-Martinuskerk",
+    "url": "https://nl.wikipedia.org/wiki/Sint-Martinuskerk_(Weert)"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Sint-Martinuskerk_(Weert)",
+   "photos": [
+    {
+     "src": "history/08_0.jpg?v=ee43d2b6",
+     "credit": "De Sint-Martinuskerk in 2010, Massimo Catarinella, CC BY 3.0",
+     "url": "https://commons.wikimedia.org/wiki/File:MartinuskerkWeertLimburgNederland.jpg"
+    },
+    {
+     "src": "history/08_1.jpg?v=ee43d2b6",
+     "credit": "De toren in 2018, FaceMePLS, CC BY 2.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Toren%20Martinuskerk%20-%20Weert%20%2829022792687%29.jpg"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "year": "1879",
+   "title": "De IJzeren Rijn",
+   "text": "Op 20 juli 1879 ging het station open, aan de spoorlijn die de IJzeren Rijn heet. Het bakstenen gebouw van nu, met de achtkantige toren en het stadswapen op de spits, is uit 1914 en ontworpen door George van Heukelom. Tot eind jaren zestig was Weert een goederenstation met een eigen rangeerlocje, de Sik.",
+   "x": 177125.5,
+   "y": 362225.8,
+   "h": 8,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Station Weert",
+    "url": "https://nl.wikipedia.org/wiki/Station_Weert"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Station_Weert",
+   "photos": [
+    {
+     "src": "history/12_0.jpg?v=ee43d2b6",
+     "credit": "Het station in 2024, Sneeuwvlakte, CC BY-SA 4.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Station%20Weert%20%282024%29.jpg"
+    },
+    {
+     "src": "history/12_1.jpg?v=ee43d2b6",
+     "credit": "Het stationsgebouw, M.Minderhoud, CC BY-SA 3.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Weert%20stationsgebouw.jpg"
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "year": "1938",
+   "title": "Kazerne en kazematten",
+   "text": "De Van Hornekazerne is in 1938 gebouwd als een van zestien standaardkazernes voor de infanterie. In mei 1940 trokken de soldaten naar de Peel-Raamstelling langs het kanaal; de kazerne bleef leeg achter en de bezetter trok erin. Na de bevrijding kwamen de Engelsen, en in november 1944 was Eisenhower op bezoek. Vanaf 1951 zijn hier alle onderofficieren van de landmacht opgeleid, aan de Onderofficiersschool, die sinds 1961 Koninklijk heet.",
+   "x": 175884.7,
+   "y": 361757.8,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Van Hornekazerne",
+    "url": "https://nl.wikipedia.org/wiki/Van_Hornekazerne"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Van_Hornekazerne",
+   "photos": [
+    {
+     "src": "history/14_0.jpg?v=ee43d2b6",
+     "credit": "De Van Hornekazerne in 2011, ArmTheInsane, CC BY-SA 3.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Van%20Horne%20Kazerne%20%2820%29.JPG"
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "year": "1306",
+   "title": "De Weertse munt",
+   "text": "In 1306 droeg het kapittel van Sint-Servaas in Maastricht zijn rechten in Weert over aan de heren van Horne. Van dat jaar tot 1568 werden in Weert munten geslagen. De sierlijke gezwenkte voorgevel van het Muntgebouw is jonger, van 1580 of kort daarna. De buurt eromheen is gesloopt voor winkelcentrum de Muntpassage (1970); alleen dit huis bleef staan. In 2003 stond het model voor het 84ste Delfts blauwe huisje van de KLM.",
+   "x": 177201.3,
+   "y": 362790.2,
+   "h": 8,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Muntgebouw",
+    "url": "https://nl.wikipedia.org/wiki/Muntgebouw_(Weert)"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Muntgebouw_(Weert)",
+   "photos": [
+    {
+     "src": "history/04_0.jpg?v=ee43d2b6",
+     "credit": "Het Muntgebouw in 2001, J.P. de Koning, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Overzicht%20voorgevel%20en%20gedeelte%20linker%20zijgevel%20-%20Weert%20-%2020354343%20-%20RCE.jpg"
+    },
+    {
+     "src": "history/04_1.jpg?v=ee43d2b6",
+     "credit": "Het Muntgebouw in 2020, FrDr, CC BY-SA 4.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Muntgebouw%20Weert%2001.jpg"
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "year": "1455",
+   "title": "De Nijenborgh",
+   "text": "Jacob I van Horne liet tussen 1455 en 1461 een nieuwe waterburcht bouwen tegen de stadswal: de Nijenborgh, de nieuwe burcht. Het kasteel van 75 bij 60 meter had vier hoektorens en een hoge woonvleugel met trapgevels. In de Tachtigjarige Oorlog is het keer op keer belegerd, en in 1702, in de Spaanse Successieoorlog, verwoest. Op de fundamenten van de zuidelijke toren staat sinds 1841 het herenhuis Op de Biest.",
+   "x": 177452.1,
+   "y": 363055.0,
+   "h": 6,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Kasteel Nijenborgh",
+    "url": "https://nl.wikipedia.org/wiki/Kasteel_Nijenborgh"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Kasteel_Nijenborgh",
+   "photos": [
+    {
+     "src": "history/06_0.jpg?v=ee43d2b6",
+     "credit": "De ruïne van de toegangspoort op een oude prent (publiek domein)",
+     "url": "https://commons.wikimedia.org/wiki/File:Nijenborgh%20prent.jpg"
+    },
+    {
+     "src": "history/06_1.jpg?v=ee43d2b6",
+     "credit": "Het kasteel in 2008, Thommorris, CC BY-SA 3.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Kasteel%20Biest.jpg"
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "year": "1568",
+   "title": "De graaf van Horne onthoofd",
+   "text": "Philips de Montmorency, graaf van Horne en heer van Weert, was admiraal en ridder van het Gulden Vlies. Toen Alva kwam, vluchtte Willem van Oranje; Egmont en Horne bleven. Op 5 juni 1568 zijn ze op de Grote Markt van Brussel onthoofd. Zijn grafsteen ligt in de Martinuskerk, maar of hij daar ook begraven is, staat niet vast. Sinds 2022 staat hij te paard in de voorhof van zijn kasteel.",
+   "x": 177488.7,
+   "y": 363145.2,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Filips van Montmorency",
+    "url": "https://nl.wikipedia.org/wiki/Filips_van_Montmorency"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Filips_van_Montmorency",
+   "photos": [
+    {
+     "src": "history/09_0.jpg?v=ee43d2b6",
+     "credit": "Muurschildering van de onthoofding, FrDr, CC BY-SA 4.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Muurschildering%20%27de%20onthoofding%20van%20Philips%20van%20Horne%27%20Weert%2001.jpg"
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "year": "ca. 1290",
+   "title": "De Aldenborgh",
+   "text": "De heren van Horne kregen in de 12e eeuw steeds meer te zeggen in Weert. Een oorkonde uit 1295 noemt het huis van graaf Willem II van Horne; een jaar later mocht hij water aftappen om er de gracht mee te vullen. Of het een kasteel was of alleen een hof, weet niemand zeker. In 2020 is hier een grafkelder gevonden waarin Philips van Horne misschien is begraven.",
+   "x": 177704.8,
+   "y": 363377.6,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Aldenborgh",
+    "url": "https://nl.wikipedia.org/wiki/Aldenborgh"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Aldenborgh",
+   "photos": []
+  },
+  {
+   "n": 10,
+   "year": "1461",
+   "title": "Minderbroeders op de Biest",
+   "text": "Toen zijn nieuwe kasteel klaar was, schonk Jacob I van Horne zijn oude hof, de Aldenborgh, aan de minderbroeders. Na de dood van zijn vrouw trad hij zelf in. De laatgotische Paterskerk is van 1512 tot 1526 gebouwd. De Fransen hieven het klooster in 1797 op; in 1836 kwamen de broeders terug. Ze bleven tot 2023: na 561 jaar waren er te weinig broeders over.",
+   "x": 177699.2,
+   "y": 363378.8,
+   "h": 10,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Minderbroedersklooster",
+    "url": "https://nl.wikipedia.org/wiki/Minderbroedersklooster_(Weert)"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Minderbroedersklooster_(Weert)",
+   "photos": [
+    {
+     "src": "history/07_0.jpg?v=ee43d2b6",
+     "credit": "De Paterskerk in 2012, Peter van der Wielen, CC BY-SA 3.0 NL",
+     "url": "https://commons.wikimedia.org/wiki/File:Aldenborgh.JPG"
+    },
+    {
+     "src": "history/07_1.jpg?v=ee43d2b6",
+     "credit": "De achterkant van het klooster met de begraafplaats in 2004, Jan van den Eijnden, CC BY-SA 3.0 NL",
+     "url": "https://commons.wikimedia.org/wiki/File:Weert%20Minderbroederklooster-3.jpg"
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "year": "1907",
+   "title": "De Weerter kempenaar",
+   "text": "Al sinds 1836 werden hier houten schepen gerepareerd. In 1907 begon de Weerter Scheepsbouw Maatschappij met stalen schepen; tot 1947 liepen er 145 van stapel. In de jaren twintig tekende Driessens de Weerter kempenaar: 50 meter lang, 6,60 breed en met 525 ton net iets meer laadvermogen dan een gewone kempenaar. In het beste jaar leverde de werf er dertien af en werkten er tweehonderd man.",
+   "x": 178229.2,
+   "y": 363800.5,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Weerter Scheepsbouw Maatschappij",
+    "url": "https://nl.wikipedia.org/wiki/Weerter_Scheepsbouw_Maatschappij"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Weerter_Scheepsbouw_Maatschappij",
+   "photos": []
+  },
+  {
+   "n": 12,
+   "year": "1e eeuw v.Chr.",
+   "title": "De Keltische Schans",
+   "text": "Bij de bouw van de wijk Molenakker vonden amateurarcheologen Romeins bronzen vaatwerk. De opgraving van 1994 bracht een versterking van anderhalve hectare aan het licht, uit de eerste eeuw voor Christus: een vluchtburcht met een gracht van drie meter breed, in de tijd van de Eburonen. Ernaast lag tot ongeveer 250 na Christus een nederzetting van ten minste tien hectare, met 45 grotere gebouwen en zes waterputten.",
+   "x": 177845.4,
+   "y": 363934.5,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Keltische Schans",
+    "url": "https://nl.wikipedia.org/wiki/Keltische_Schans"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Keltische_Schans",
+   "photos": []
+  },
+  {
+   "n": 13,
+   "year": "1856",
+   "title": "Kleipijpen van Trumm-Bergmans",
+   "text": "De pijpenfabriek Trumm-Bergmans kwam in 1855 naar Weert en bouwde een jaar later deze oven van baksteen en chamotte om kleipijpen in te bakken. In 1933 stapte de fabriek over op pijpen van bruyèrehout; in de oven ging voortaan het houtafval. In 1989 is hij vijftig meter verplaatst, naar de Biesterbrug.",
+   "x": 177816.6,
+   "y": 363660.7,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Kleipijpenoven",
+    "url": "https://nl.wikipedia.org/wiki/Kleipijpenoven"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Kleipijpenoven",
+   "photos": [
+    {
+     "src": "history/11_0.jpg?v=ee43d2b6",
+     "credit": "De oven in 2003, IJsbrand Heins, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Overzicht%20zijde%20van%20bakstenen%20oven%20met%20trap%20-%20Weert%20-%2020346649%20-%20RCE.jpg"
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "year": "1825",
+   "title": "De Zuid-Willemsvaart",
+   "text": "Na de dood van de laatste graaf raakte Weert in verval. Het kanaal van Maastricht naar 's-Hertogenbosch bracht de handel terug. Bij Weert loopt het naar het westen, door het bed van Napoleons nooit voltooide Grand Canal du Nord. De Stadsbrug, de Statterbrök, is zo oud als het kanaal: eerst een ophaalbrug, vanaf 1913 een draaibrug, en sinds 1968 de hefbrug van nu.",
+   "x": 177088.4,
+   "y": 363216.9,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Stadsbrug Weert",
+    "url": "https://nl.wikipedia.org/wiki/Stadsbrug_Weert"
+   },
+   "more": "https://nl.wikipedia.org/wiki/Stadsbrug_Weert",
+   "photos": [
+    {
+     "src": "history/10_0.jpg?v=ee43d2b6",
+     "credit": "De Stadsbrug, Thommorris, CC BY-SA 3.0",
+     "url": "https://commons.wikimedia.org/wiki/File:Stadsbrug.jpg"
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "year": "1944",
+   "title": "Bevrijd door de Suffolks",
+   "text": "Op 22 september 1944 is Weert bevrijd, door Britse soldaten van het Suffolk Regiment. De Suffolkweg aan de overkant van het kanaal heet naar hen, en bij de Stadsbrug staat sinds 2002 hun monument.",
+   "x": 177059.1,
+   "y": 363212.3,
+   "h": 0,
+   "zoom": 1.2,
+   "source": {
+    "label": "Wikipedia: Kenneth Mayhew",
+    "url": "https://nl.wikipedia.org/wiki/Kenneth_Mayhew"
+   },
+   "more": null,
+   "photos": []
+  }
+ ]
+}
