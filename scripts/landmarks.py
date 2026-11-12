@@ -21,6 +21,10 @@ RCE = "Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0"
 WP = "https://nl.wikipedia.org/wiki/"  # every story is written from the Dutch Wikipedia article it links to
 
 # Buildings found by an address or point; `pand` is resolved to the 3D BAG building under that point.
+# 3D BAG makes a windmill a straight prism, so a `mill` is built from its own measures (scripts/build_buildings.py):
+# the middle of the body (x, y in RD), its belt (height, radius on top, radius at the foot), the radius of the body on
+# the belt and at the top (r), and the heights above the street of the top of the body, of the cap and of the axle.
+# `sails` is the length of a sail; the viewer turns them (viewer/index.html).
 BUILDINGS = [
     {
         "name": "Sint-Martinuskerk",
@@ -129,21 +133,28 @@ BUILDINGS = [
     {
         "name": "Molen Sint Oda",
         "at": (176497.2, 362938.2),  # the cap of the mill in AHN
-        "style": "house",
-        "wall": (128, 76, 58),
-        "roof": (58, 60, 66),
+        "style": "mill",
+        "wall": (124, 84, 66),
+        "roof": (66, 60, 58),
+        # The round body in 3D BAG, on a belt of 2.9 m in AHN. The cap and the sails came off in 2026 (molendatabase.nl);
+        # the body's top is 3D BAG's lowest roof height, the eaves of that cap.
+        "mill": {"x": 176497.5, "y": 362937.4, "belt": (2.9, 7.5, 11.5), "r": (4.1, 2.9), "body": 13.9},
         "kind": "Rijksmonument · 1883",
         "address": "Suffolkweg",
-        "text": "Ronde bakstenen beltmolen uit 1883, genoemd naar de heilige Oda. Tot 2002 maalde de molenaar hier voor zijn beroep rogge en boekweit. Daarna stond de molen stil, tot hij in 2008 weer draaide.",
+        "text": "Ronde bakstenen beltmolen uit 1883, genoemd naar de heilige Oda. Tot 2002 maalde de molenaar hier voor zijn beroep rogge en boekweit. Daarna raakte de molen in verval, en in 2026 zijn de kap en het wiekenkruis eraf gehaald. Nu wacht hij op herstel.",
         "more": WP + "Sint_Oda_(molen)",
         "photo": ("Weert StOda.jpg", "Molen Sint Oda in 2008, Groucho M, CC BY-SA 3.0"),
     },
     {
         "name": "Molen Wilhelmus-Hubertus",
         "at": (176974.2, 363402.2),  # the cap of the mill in AHN
-        "style": "house",
-        "wall": (128, 76, 58),
-        "roof": (58, 60, 66),
+        "style": "mill",
+        "wall": (46, 44, 46),  # tarred brick
+        "roof": (84, 82, 86),
+        # 3D BAG puts the ground on top of the belt, 4.9 m above the street, which AHN shows from 8 to 15 m out, and the
+        # cap's eaves and top at 17.0 and 20.4 m. The axle is 17.69 m above the street (zoning plan); the sails span
+        # about 24 m (photos: the tips nearly reach the belt).
+        "mill": {"x": 176974.7, "y": 363402.9, "belt": (4.9, 8.0, 15.0), "r": (4.3, 3.0), "body": 16.8, "cap": 20.4, "axle": 17.69, "sails": 12.0},
         "kind": "Rijksmonument · 1904",
         "address": "Oude Hushoverweg 30",
         "text": "Beltmolen uit 1904, gebouwd nadat de standerdmolen op deze plek door de bliksem was getroffen en afbrandde. Hij maalde tot vlak voor de Tweede Wereldoorlog. Bij de restauratie van 1961 kreeg hij zijn naam, naar de opa van de molenbouwer. Nu is het een restaurant; de molen kan nog draaien.",
@@ -152,7 +163,11 @@ BUILDINGS = [
     },
     {
         "name": "Boonesmolen",
-        "addrs": ["Julianalaan 24"],
+        "at": (177146.2, 362085.1),  # the round body in 3D BAG, 14.5 m high in AHN, without a belt
+        "style": "mill",
+        "wall": (98, 76, 66),  # weathered brick, dark brown and grey in photos
+        "roof": (78, 72, 64),
+        "mill": {"x": 177146.2, "y": 362085.1, "r": (4.5, 3.1), "body": 14.5},
         "kind": "Molenromp · 1855",
         "address": "Julianalaan 24",
         "text": "Van deze koren-, pel- en oliemolen uit 1855 staat alleen de romp nog. Hij heet naar de familie Boonen, eigenaar van 1863 tot 1927. Toen de buurt achter het station volgebouwd raakte, ving de molen steeds minder wind; in de zware storm van 9 februari 1949 brak de as. Daarna stond er een grote reclame voor Blue Band op de romp. De kap ging er in 1968 af.",
@@ -374,7 +389,7 @@ def main():
         if pid and "style" in b:
             out["buildings"][pid] = {k: v for k, v in b.items() if k not in ("at", "latlon", *INFO)}
         if pid:
-            out["hotspots"].append({"name": b["name"], "pid": pid, "x": x, "y": y, **{k: b[k] for k in INFO if k in b}})
+            out["hotspots"].append({"name": b["name"], "pid": pid, "x": x, "y": y, **{k: b[k] for k in (*INFO, "mill") if k in b}})
         print(f"{b['name']}: {pid or 'no building'}")
     for p in POINTS:
         x, y = p["at"] if "at" in p else address_xy(p["addr"]) if "addr" in p else wgs_to_rd(*p["latlon"])

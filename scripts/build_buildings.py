@@ -187,9 +187,30 @@ def part(meta, pid, kind, axis, height, wall, roof, param=0.0):
     return len(meta) - 1
 
 
+def add_mill(verts, meta, pid, m, wall, roof):
+    """A windmill from its measures (scripts/landmarks.py): a grassy belt, a tapered round body on it and a cap. Heights
+    are above the street, the render's ground; 3D BAG puts a belt mill's ground on top of its belt."""
+    belt = m.get("belt", (0.0, 0.0, 0.0))
+    x, y = m["x"], m["y"]
+    if belt[0]:
+        bi = part(meta, pid, "belt", 0.0, belt[0], (102, 144, 62), (106, 150, 64))
+        emit(verts, frustum(ngon_ring(x, y, belt[2], 32, 0.0), ngon_ring(x, y, belt[1], 32, 0.0), 0.0, belt[0]), bi, 0.0)
+    # 16 faces: the building shader puts the windows on every fourth, turned a face further on each floor.
+    bi = part(meta, pid, "mill", 0.0, m["body"], wall, roof, param=belt[0])
+    emit(verts, frustum(ngon_ring(x, y, m["r"][0], 16, 0.0), ngon_ring(x, y, m["r"][1], 16, 0.0), belt[0], m["body"]), bi, 0.0, center_u=True)
+    if "cap" in m:
+        # A round hood over the top of the body, so the viewer's sails fit whichever way they face.
+        eave, knee = m["r"][1] + 0.5, m["body"] + 0.55 * (m["cap"] - m["body"])
+        bi = part(meta, pid, "cap", 0.0, m["cap"], roof, roof)
+        emit(verts, frustum(ngon_ring(x, y, eave, 16, 0.0), ngon_ring(x, y, eave * 0.8, 16, 0.0), m["body"], knee), bi, 0.0)
+        emit(verts, pyramid(ngon_ring(x, y, eave * 0.8, 16, 0.0), knee, m["cap"]), bi, 0.0)
+
+
 def add_landmark_parts(verts, meta, pid, lm, ground, axis, roof_tris):
-    """Towers, roof turrets and crosses that 3D BAG smooths away."""
+    """Towers, roof turrets and crosses that 3D BAG smooths away, and windmills."""
     wall, roof = lm.get("wall", (150, 80, 62)), lm.get("roof", (70, 72, 80))
+    if "mill" in lm:
+        add_mill(verts, meta, pid, lm["mill"], wall, roof)
     if "tower" in lm:
         t = lm["tower"]
         ring = rect_ring(t["x"], t["y"], t["w"], t["w"], axis)
@@ -262,7 +283,10 @@ def main():
         kas = bool(attrs.get("b3_kas_warenhuis"))
         height = (attrs.get("b3_h_dak_max") or ground) - ground
         kind = "house"
-        if kas or geom is None or height < 1.0:
+        lm = named.get(parent_id)
+        if lm and "mill" in lm:
+            roof_tris = []  # a straight prism in 3D BAG; add_landmark_parts builds the mill from its own measures
+        elif kas or geom is None or height < 1.0:
             # 3D BAG cannot reconstruct glass roofs (lidar passes through), so build those ourselves.
             kind = "greenhouse" if kas else "shed"
             height = greenhouse_height(attrs.get("oorspronkelijkbouwjaar")) if kas else 3.0
@@ -280,7 +304,6 @@ def main():
             area = attrs.get("b3_opp_grond") or 0
             if area > 250 and height < 10:
                 kind = "barn"
-        lm = named.get(parent_id)
         if lm:
             kind = lm["style"]
         roof_color = sample_roof(aerial, roof_tris)

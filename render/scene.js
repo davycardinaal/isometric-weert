@@ -14,7 +14,7 @@ const BACKGROUND = new THREE.Color(0x20242c);
 const ROAD_ALPHA = 0.5; // marks road pixels in the color target, see makeRoads and the post pass
 
 const DATA = '/data/build';
-const TYPES = { house: 0, barn: 1, shed: 2, greenhouse: 3, tank: 4, silo: 5, canopy: 6, church: 7, tower: 8, turret: 9, school: 10, mast: 11, cross: 12 };
+const TYPES = { house: 0, barn: 1, shed: 2, greenhouse: 3, tank: 4, silo: 5, canopy: 6, church: 7, tower: 8, turret: 9, school: 10, mast: 11, cross: 12, mill: 13, cap: 14, belt: 15 };
 
 const rgb = (r, g, b) => new THREE.Color(r / 255, g / 255, b / 255);
 const hash = (x) => {
@@ -189,6 +189,18 @@ vec3 buildingPattern(vec3 base) {
       // Lattice mast: steel cross-bracing.
       float a = fract((vUv2.x + vUv2.y) / 2.2), b = fract((vUv2.y - vUv2.x) / 2.2);
       c = (a < 0.16 || b < 0.16 || mod(vUv2.y, 2.2) < 0.25) ? vec3(0.78, 0.8, 0.82) : vec3(0.42, 0.44, 0.47);
+    } else if (type == 13) {
+      // Windmill body: a plain wall with a small arched window in a white frame every quarter turn on each floor, a
+      // sixteenth of a turn on from the floor below (on every fourth of its 16 faces, see scripts/build_buildings.py).
+      // vAxis is the height of the belt it stands on.
+      float y = vUv2.y - vAxis, floor_ = floor(y / 3.4), in_ = y - floor_ * 3.4;
+      float turn = atan(vWorldNormal.z, vWorldNormal.x) / 1.5708 - floor_ / 4.0;
+      if (abs(turn - floor(turn + 0.5)) < 0.04) {
+        float u = vUv2.x;
+        float r = in_ > 1.9 ? length(vec2(u, in_ - 1.9)) : abs(u);
+        if (in_ > 0.7 && r < 0.62) c = (in_ > 0.95 && r < 0.3) ? vec3(0.16, 0.17, 0.2) : vec3(0.92, 0.91, 0.87);
+      }
+      if (y < 0.4) c *= 0.8;
     }
   } else if (roof) {
     if (type >= 8 && type != 10) {
