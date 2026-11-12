@@ -371,7 +371,7 @@
     <button type="button" data-place="Kasteel Nijenborgh" data-en="Castle">Kasteel</button>
     <button type="button" data-place="Station Weert">Station</button>
     <button type="button" data-place="Stadsbrug" data-en="Canal">Kanaal</button>
-    <button type="button" data-place="Molen Sint Oda" data-en="Windmill">Molen</button>
+    <button type="button" data-place="Molen Wilhelmus-Hubertus" data-en="Windmill">Molen</button>
     <button type="button" id="routes-toggle" aria-pressed="false" data-en="Walking routes">Wandelroutes</button>
   </div>
   <div id="series" role="group" aria-label="Ontdek" data-en-label="Explore">
@@ -782,6 +782,7 @@ Werk stap voor stap, controleer de licenties van de data die je gebruikt, en vra
     };
     placeSpots();
     onView.push(placeSpots);
+    sails = hotspots.filter((h) => h.mill?.sails).map((h) => ({ mode: MILL, alpha: 1, m: h.mill, ...rdToLocal(h.mill.x, h.mill.y) }));
     viewer.addOverlay({ element: svg, location: new OpenSeadragon.Rect(0, 0, 1, M.height / M.width) });
     categories = data.categories || [];
     const row = document.getElementById('series');
@@ -1227,7 +1228,7 @@ Werk stap voor stap, controleer de licenties van de data die je gebruikt, en vra
     truck: { half: 7.6, sort: true, boxes: [[-7.4, 7.4, 1.2, 0.45, 1.05, 'dark'], [-7.4, 5.0, 1.25, 1.05, 3.9, 'load'], [5.3, 7.6, 1.22, 0.55, 3.15, 'cab']] },
     bike: { half: 0.9, bike: true, boxes: [[-0.85, 0.85, 0.05, 0.3, 0.75, 'dark'], [-0.32, 0.14, 0.2, 0.8, 1.42, 'body'], [-0.12, 0.08, 0.1, 1.42, 1.66, 'load']] },
   };
-  const CAR = 0, BIKE = 1, WALK = 2, WEIGHT = ['w', 'wb', 'ww'], DENSITY = ['d', 'db', 'dw'], SIDE = [null, 'bo', 'wo'];
+  const CAR = 0, BIKE = 1, WALK = 2, MILL = 3, WEIGHT = ['w', 'wb', 'ww'], DENSITY = ['d', 'db', 'dw'], SIDE = [null, 'bo', 'wo'];
   let lanes = [], movers = [], layer = null, off = null;
   const outs = new Map(), entries = { car: {}, bike: [], walk: [] };
   let exits = new Set();
@@ -1515,6 +1516,7 @@ Werk stap voor stap, controleer de licenties van de data die je gebruikt, en vra
 
   function drawMover(ctx, m, x, z, dx, dz) {
     if (m.mode === WALK) return drawWalker(ctx, m, x, z, dx, dz);
+    if (m.mode === MILL) return drawSails(ctx, m);
     const V = VEHICLES[m.type];
     drawBoxes(ctx, x, z, dx, dz, V.boxes, (role) => (role === 'dark' ? DARK : role === 'load' ? m.load : m.paint), { sort: V.sort, outline: !V.bike });
   }
@@ -1566,6 +1568,49 @@ Werk stap voor stap, controleer de licenties van de data die je gebruikt, en vra
     }
   }
 
+  // The sails of a working windmill (hotspots.json "mill", from scripts/landmarks.py): four stocks with a lattice on
+  // the trailing side, turning counter-clockwise seen from the front, once every 4.5 s. The rendered cap is round, so in
+  // every view the sails can face the camera, a metre out from the top of the body: to its front left or front right,
+  // whichever catches more sun.
+  let sails = [];
+  const SAIL_STOCK = [236, 234, 226], SAIL_LATTICE = [46, 42, 40];
+  function drawSails(ctx, s) {
+    const sun = (a) => Math.sin(a) * SUN[0] - Math.cos(a) * SUN[2];
+    const [left, right] = [225, 135].map((d) => ((VIEW.look + d) * Math.PI) / 180), face = sun(left) >= sun(right) ? left : right;
+    const { m } = s, ax = Math.sin(face), az = -Math.cos(face); // out of the front of the cap
+    const rx = az, rz = -ax; // to the right, seen from the front
+    const hub = m.r[1] + 1, R = m.sails, w = R / 6, from = R / 5;
+    const cx = s.x + ax * hub, cz = s.z + az * hub;
+    // A point d along the sail at angle a (counter-clockwise from the right, seen from the front), t toward its trailing side.
+    const at = (a, d, t) => {
+      const side = d * Math.cos(a) + t * Math.sin(a), up = d * Math.sin(a) - t * Math.cos(a);
+      return toPx(cx + rx * side, cz + rz * side, m.axle + up);
+    };
+    const line = (p, q, width, color) => {
+      ctx.beginPath();
+      ctx.moveTo(...p);
+      ctx.lineTo(...q);
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      ctx.stroke();
+    };
+    const stock = shade(SAIL_STOCK, ax, 0, az), lattice = shade(SAIL_LATTICE, ax, 0, az);
+    line(toPx(s.x + ax * m.r[1], s.z + az * m.r[1], m.axle), toPx(cx, cz, m.axle), 2.4, shade(DARK, ax, 0, az));
+    const arms = [0, 1, 2, 3].map((i) => (clock * 2 * Math.PI) / 4.5 + (i * Math.PI) / 2);
+    for (const a of arms) {
+      ctx.globalAlpha = 0.5;
+      poly(ctx, [at(a, from, 0), at(a, R, 0), at(a, R, w), at(a, from, w)], lattice);
+      ctx.globalAlpha = 1;
+      for (let d = from; d <= R + 0.01; d += (R - from) / 8) line(at(a, d, 0), at(a, d, w), 0.7, lattice);
+      line(at(a, from, w), at(a, R, w), 0.8, stock);
+    }
+    for (const a of arms) line(at(a, 0, 0), at(a, R, 0), 1.4, stock);
+    ctx.beginPath();
+    ctx.arc(...toPx(cx, cz, m.axle), 0.5 * M.scale, 0, Math.PI * 2);
+    ctx.fillStyle = shade(DARK, ax, 0, az);
+    ctx.fill();
+  }
+
   // A bird: two wings that beat, with its shadow far off on the ground.
   function drawBird(ctx, f, b, inView) {
     const nx = -f.dz, nz = f.dx;
@@ -1613,6 +1658,8 @@ Werk stap voor stap, controleer de licenties van de data die je gebruikt, en vra
       const [x, z, dx, dz] = place(m);
       if (inView(x, z, 0)) (objectsLayer && m.behind ? behind : front).push([depthOf(x, z), m, x, z, dx, dz]);
     }
+    // The sails turn in front of their cap, high above the ground: over the buildings and trees layer.
+    for (const s of sails) if (inView(s.x, s.z, s.m.axle)) front.push([depthOf(s.x, s.z), s, s.x, s.z, 0, 0]);
     paint(ctx, b, k, front, inView);
   }
 
