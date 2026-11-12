@@ -1,6 +1,7 @@
 """Hover areas for the viewer: the outline on screen of every named building, and a small disc for named points.
 Each carries what the viewer's info card shows when it is clicked: kind, story, address, links, a photo, and the
-title of a tour stop about the same place (scripts/build_history.py).
+title of a tour stop about the same place (scripts/build_history.py). A windmill also carries its measures, so the
+viewer can put the sails on its cap.
 
 Polygons are in the render's screen meters (u right, v up from the image center line), one per view in config.VIEWS;
 the viewer turns them into image pixels with map.json. Output: data/build/hotspots.json
@@ -61,7 +62,7 @@ def main():
             a = np.linspace(0, 2 * np.pi, 16, endpoint=False)
             x, z = h["x"] - CX + 5 * np.cos(a), CY - h["y"] + 5 * np.sin(a)
             pts = [np.concatenate([screen(x, 0 * x, z, look), screen(x, 0 * x + 3, z, look)]) for look in VIEWS]
-        spot = {k: h[k] for k in ("name", "note", "kind", "text", "address", "web", "more", "stop") if h.get(k)}
+        spot = {k: h[k] for k in ("name", "note", "kind", "text", "address", "web", "more", "stop", "mill") if h.get(k)}
         spot["x"], spot["y"] = round(h["x"], 1), round(h["y"], 1)
         spot["poly"] = [[[round(float(p[0]), 2), round(float(p[1]), 2)] for p in hull(view)] for view in pts]
         if "photo" in h:
